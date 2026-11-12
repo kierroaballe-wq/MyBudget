@@ -1,0 +1,2611 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Kimuel's FBM — Offline iOS Funnel Budgeting</title>
+
+    <!-- iOS Safari PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kimuel FBM">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- Inline SVG Apple Touch Icon & Favicon (Zero External Requests) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%234f46e5'/%3E%3Cstop offset='100%25' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='40' fill='url(%23g)'/%3E%3Cpath d='M38 48h104l-40 48v36l-24 12V96L38 48z' fill='none' stroke='%23ffffff' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%234f46e5'/%3E%3Cpath d='M14 18h36L36 35v13l-8 4V35L14 18z' fill='none' stroke='%23fff' stroke-width='4.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+    <!-- Dynamic Web App Manifest Link (Populated via Blob on Load) -->
+    <link id="pwaManifestLink" rel="manifest" href="">
+
+    <!-- 100% Self-Contained Offline Styles (Zero External CDNs) -->
+    <style>
+        :root {
+            --bg-app: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-subtle: #f8fafc;
+            --bg-input: #f1f5f9;
+            --bg-nav: rgba(255, 255, 255, 0.88);
+            --border-color: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --accent-indigo: #4f46e5;
+            --accent-indigo-soft: #eef2ff;
+            --accent-blue: #2563eb;
+            --accent-blue-soft: #eff6ff;
+            --accent-purple: #9333ea;
+            --accent-purple-soft: #faf5ff;
+            --accent-emerald: #059669;
+            --accent-emerald-soft: #ecfdf5;
+            --accent-amber: #d97706;
+            --accent-amber-soft: #fffbeb;
+            --accent-rose: #e11d48;
+            --accent-rose-soft: #fff1f2;
+            --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.07);
+            --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.14);
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+            --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        html.dark {
+            --bg-app: #020617;
+            --bg-card: #0f172a;
+            --bg-subtle: #1e293b;
+            --bg-input: #1e293b;
+            --bg-nav: rgba(15, 23, 42, 0.88);
+            --border-color: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --accent-indigo: #6366f1;
+            --accent-indigo-soft: rgba(99, 102, 241, 0.16);
+            --accent-blue: #60a5fa;
+            --accent-blue-soft: rgba(59, 130, 246, 0.16);
+            --accent-purple: #c084fc;
+            --accent-purple-soft: rgba(168, 85, 247, 0.16);
+            --accent-emerald: #34d399;
+            --accent-emerald-soft: rgba(16, 185, 129, 0.16);
+            --accent-amber: #fbbf24;
+            --accent-amber-soft: rgba(245, 158, 11, 0.16);
+            --accent-rose: #fb7185;
+            --accent-rose-soft: rgba(244, 63, 94, 0.16);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+            --shadow-lg: 0 14px 32px rgba(0, 0, 0, 0.55);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-app);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            overscroll-behavior-y: none;
+            min-height: 100vh;
+        }
+
+        body {
+            padding-top: calc(58px + var(--safe-top));
+            padding-bottom: calc(82px + var(--safe-bottom));
+            padding-left: var(--safe-left);
+            padding-right: var(--safe-right);
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .mono {
+            font-family: var(--font-mono);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Sticky iOS Top Navigation Header */
+        .ios-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            padding-top: var(--safe-top);
+            padding-left: max(16px, var(--safe-left));
+            padding-right: max(16px, var(--safe-right));
+            background: var(--bg-nav);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .ios-header-inner {
+            max-width: 960px;
+            margin: 0 auto;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.28);
+        }
+
+        .brand-title {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .brand-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 1px;
+        }
+
+        .offline-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 1px 6px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            background: var(--accent-emerald-soft);
+            color: var(--accent-emerald);
+        }
+
+        .offline-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            min-width: 38px;
+            height: 38px;
+            padding: 0 10px;
+            border-radius: 11px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s ease, background-color 0.15s ease;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 14px 16px;
+        }
+
+        /* iOS Add to Home Screen Banner */
+        .a2hs-banner {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(129, 140, 248, 0.35);
+            display: none;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .a2hs-banner.visible {
+            display: flex;
+        }
+
+        .a2hs-content {
+            font-size: 12.5px;
+            line-height: 1.45;
+        }
+
+        .a2hs-title {
+            font-weight: 700;
+            font-size: 13.5px;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .a2hs-inline-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 5px;
+            padding: 2px 5px;
+            vertical-align: middle;
+        }
+
+        .a2hs-close {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #ffffff;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        /* Tab Views */
+        .tab-view {
+            display: none;
+            animation: fadeIn 0.18s ease;
+        }
+
+        .tab-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero Balance Card */
+        .hero-card {
+            background: linear-gradient(140deg, #0f172a 0%, #1e293b 55%, #1e1b4b 100%);
+            color: #ffffff;
+            border-radius: 22px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.11);
+            color: #c7d2fe;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 999px;
+            margin-bottom: 10px;
+        }
+
+        .hero-balance {
+            font-size: clamp(28px, 7.5vw, 42px);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .hero-sub {
+            font-size: 12px;
+            color: #94a3b8;
+            margin: 6px 0 16px;
+        }
+
+        .hero-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .hero-stat-box {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 13px;
+            padding: 10px;
+        }
+
+        .hero-stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #94a3b8;
+            font-weight: 700;
+            display: block;
+        }
+
+        .hero-stat-val {
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 3px;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Section Header */
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 18px 0 10px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .text-link-btn {
+            background: none;
+            border: none;
+            color: var(--accent-indigo);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 4px 6px;
+        }
+
+        /* 4 FBM Buckets Grid */
+        .buckets-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .buckets-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 14px;
+            }
+        }
+
+        .bucket-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 14px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .bucket-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .bucket-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .bucket-pct {
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 7px;
+            border-radius: 7px;
+        }
+
+        .bucket-name {
+            font-size: 13px;
+            font-weight: 700;
+            margin: 10px 0 2px;
+            line-height: 1.25;
+        }
+
+        .bucket-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin: 0 0 10px;
+        }
+
+        .bucket-bal {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--bg-input);
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.35s ease;
+        }
+
+        .bucket-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10.5px;
+            color: var(--text-muted);
+        }
+
+        /* Standard Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 18px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 14px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .card-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 2px 0 0;
+        }
+
+        /* Forms & Touch-Friendly Inputs (16px font prevents iOS Safari auto-zoom!) */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 420px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-prefix {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 15px;
+            pointer-events: none;
+        }
+
+        .input, .select {
+            width: 100%;
+            min-height: 46px;
+            padding: 10px 13px;
+            border-radius: 13px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 16px; /* Prevents iOS zoom on focus */
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .input.has-prefix {
+            padding-left: 28px;
+        }
+
+        .input:focus, .select:focus {
+            border-color: var(--accent-indigo);
+            box-shadow: 0 0 0 3px var(--accent-indigo-soft);
+        }
+
+        /* Segmented Control (iOS Style) */
+        .segmented {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--bg-input);
+            padding: 4px;
+            border-radius: 14px;
+            margin-bottom: 16px;
+        }
+
+        .seg-btn {
+            min-height: 38px;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .seg-btn.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Live Split Box */
+        .split-preview-box {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 14px;
+        }
+
+        .split-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        @media (min-width: 600px) {
+            .split-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .split-chip {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+
+        .split-chip-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .split-chip-val {
+            font-size: 13px;
+            font-weight: 800;
+            margin-top: 2px;
+            display: block;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            min-height: 48px;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.1s ease, opacity 0.15s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-emerald { background: #059669; }
+        .btn-rose { background: #e11d48; }
+        .btn-indigo { background: #4f46e5; }
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-sm {
+            min-height: 36px;
+            padding: 0 12px;
+            font-size: 12px;
+            border-radius: 10px;
+            width: auto;
+        }
+
+        /* Quick Preset Pills */
+        .preset-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .preset-pill {
+            padding: 6px 11px;
+            border-radius: 9px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .preset-pill.active {
+            background: var(--accent-emerald-soft);
+            color: var(--accent-emerald);
+            border-color: var(--accent-emerald);
+        }
+
+        /* MSR Results Grid */
+        .msr-results {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .msr-box {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: 13px;
+            padding: 11px 9px;
+            text-align: center;
+        }
+
+        .msr-box.highlight {
+            background: var(--accent-emerald-soft);
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+
+        .msr-box-label {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .msr-box.highlight .msr-box-label {
+            color: var(--accent-emerald);
+        }
+
+        .msr-box-val {
+            font-size: 13.5px;
+            font-weight: 800;
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Pure SVG Chart Container */
+        .svg-chart-wrap {
+            width: 100%;
+            overflow: hidden;
+            padding: 6px 0;
+        }
+
+        /* Transaction List (Mobile Card Style) */
+        .tx-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tx-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .tx-left {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .tx-desc {
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0 0 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tx-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .tx-badge {
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 10.5px;
+        }
+
+        .tx-right {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .tx-amount {
+            font-size: 14.5px;
+            font-weight: 800;
+            display: block;
+        }
+
+        .tx-actions {
+            display: inline-flex;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .tx-act-btn {
+            background: var(--bg-input);
+            border: none;
+            color: var(--text-secondary);
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Fixed iOS Bottom Tab Bar */
+        .ios-tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            background: var(--bg-nav);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            padding-bottom: var(--safe-bottom);
+            padding-left: var(--safe-left);
+            padding-right: var(--safe-right);
+        }
+
+        .ios-tabbar-inner {
+            max-width: 640px;
+            margin: 0 auto;
+            height: 62px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            font-size: 10.5px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 4px 0;
+            transition: color 0.15s ease, transform 0.1s ease;
+        }
+
+        .tab-btn:active {
+            transform: scale(0.92);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-indigo);
+        }
+
+        /* Modals & Toast */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: rgba(2, 6, 23, 0.65);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 12px;
+            padding-bottom: calc(12px + var(--safe-bottom));
+        }
+
+        @media (min-width: 600px) {
+            .modal-backdrop {
+                align-items: center;
+            }
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal-sheet {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.2s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .toast-wrap {
+            position: fixed;
+            top: calc(66px + var(--safe-top));
+            left: 16px;
+            right: 16px;
+            z-index: 70;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: #0f172a;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            padding: 11px 16px;
+            border-radius: 13px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .toast.error { background: #be123c; }
+        .toast.info { background: #3730a3; }
+
+        /* Color Utility Helpers */
+        .c-blue { color: var(--accent-blue); }
+        .bg-blue-soft { background: var(--accent-blue-soft); color: var(--accent-blue); }
+        .fill-blue { background: #3b82f6; }
+
+        .c-purple { color: var(--accent-purple); }
+        .bg-purple-soft { background: var(--accent-purple-soft); color: var(--accent-purple); }
+        .fill-purple { background: #a855f7; }
+
+        .c-emerald { color: var(--accent-emerald); }
+        .bg-emerald-soft { background: var(--accent-emerald-soft); color: var(--accent-emerald); }
+        .fill-emerald { background: #10b981; }
+
+        .c-amber { color: var(--accent-amber); }
+        .bg-amber-soft { background: var(--accent-amber-soft); color: var(--accent-amber); }
+        .fill-amber { background: #f59e0b; }
+
+        .c-rose { color: var(--accent-rose); }
+        .bg-rose-soft { background: var(--accent-rose-soft); color: var(--accent-rose); }
+
+        .empty-box {
+            text-align: center;
+            padding: 32px 16px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Notification Area -->
+    <div id="toastContainer" class="toast-wrap"></div>
+
+    <!-- iOS Top Navigation Header -->
+    <header class="ios-header">
+        <div class="ios-header-inner">
+            <div class="brand-wrap">
+                <div class="brand-logo" aria-hidden="true">
+                    <!-- Inline SVG Funnel Icon -->
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                </div>
+                <div style="min-width:0;">
+                    <h1 class="brand-title">Kimuel's FBM</h1>
+                    <div class="brand-sub">
+                        <span class="offline-pill"><span class="offline-dot"></span><span id="offlineStatusText">Offline Ready</span></span>
+                        <span id="headerRatioBadge" class="mono">40/30/20/10</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button type="button" id="openRatiosBtn" class="icon-btn" title="Customize Split Ratios">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+                        <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+                        <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+                        <line x1="17" y1="16" x2="23" y2="16"></line>
+                    </svg>
+                    <span>Ratios</span>
+                </button>
+                <button type="button" id="themeToggleBtn" class="icon-btn" aria-label="Toggle Dark Mode">
+                    <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="iconSun" class="hidden" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main App Container -->
+    <main class="container">
+
+        <!-- Dismissible iOS Safari 'Add to Home Screen' Guide Banner -->
+        <div id="a2hsBanner" class="a2hs-banner" role="region" aria-label="Install on iPhone">
+            <div class="a2hs-content">
+                <div class="a2hs-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                    Install Kimuel's FBM on iPhone 11
+                </div>
+                <div>
+                    Tap Safari's <strong>Share</strong> button
+                    <span class="a2hs-inline-icon" aria-label="iOS Share Icon">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                            <polyline points="16 6 12 2 8 6"></polyline>
+                            <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
+                    </span>
+                    below, then select <strong>"Add to Home Screen"</strong> for full-screen offline use.
+                </div>
+            </div>
+            <button type="button" id="dismissA2hsBtn" class="a2hs-close" aria-label="Dismiss install banner">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 1: DASHBOARD (Buckets + Visual Chart)  -->
+        <!-- ========================================== -->
+        <section id="view-dashboard" class="tab-view active">
+            <!-- Hero Balance Card -->
+            <div class="hero-card">
+                <div class="hero-badge">
+                    <span style="width:7px;height:7px;border-radius:50%;background:#34d399;display:inline-block;"></span>
+                    Total Available Funnel Balance
+                </div>
+                <h2 id="totalNetBalance" class="hero-balance mono">₱0.00</h2>
+                <p class="hero-sub">
+                    Auto-funneled before spending (<span id="bannerRatioText" class="mono" style="color:#c7d2fe;font-weight:700;">40% / 30% / 20% / 10%</span>)
+                </p>
+                <div class="hero-stats-grid">
+                    <div class="hero-stat-box">
+                        <span class="hero-stat-label">Funneled In</span>
+                        <span id="summaryTotalIncome" class="hero-stat-val mono" style="color:#34d399;">₱0</span>
+                    </div>
+                    <div class="hero-stat-box">
+                        <span class="hero-stat-label">Total Spent</span>
+                        <span id="summaryTotalSpent" class="hero-stat-val mono" style="color:#fb7185;">₱0</span>
+                    </div>
+                    <div class="hero-stat-box">
+                        <span class="hero-stat-label">Savings Kept</span>
+                        <span id="summarySavingsRate" class="hero-stat-val mono" style="color:#a5b4fc;">0.0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 FBM Buckets Grid -->
+            <div class="section-head">
+                <h3 class="section-title">Funnel Buckets</h3>
+                <button type="button" id="quickDemoBtn" class="text-link-btn">+ Sample Data</button>
+            </div>
+
+            <div class="buckets-grid">
+                <!-- Allowance (40%) -->
+                <div class="bucket-card">
+                    <div>
+                        <div class="bucket-top">
+                            <div class="bucket-icon bg-blue-soft">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path>
+                                    <path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path>
+                                    <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path>
+                                </svg>
+                            </div>
+                            <span id="badge-allowance" class="bucket-pct bg-blue-soft mono">40%</span>
+                        </div>
+                        <h4 class="bucket-name">Allowance / Pocket</h4>
+                        <p class="bucket-desc">Food, commute, daily needs</p>
+                        <div id="bal-allowance" class="bucket-bal mono">₱0.00</div>
+                    </div>
+                    <div>
+                        <div class="progress-track"><div id="bar-allowance" class="progress-fill fill-blue" style="width:100%"></div></div>
+                        <div class="bucket-meta mono">
+                            <span>In: <strong id="in-allowance">₱0</strong></span>
+                            <span>Out: <strong id="spent-allowance" class="c-rose">₱0</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wants (30%) -->
+                <div class="bucket-card">
+                    <div>
+                        <div class="bucket-top">
+                            <div class="bucket-icon bg-purple-soft">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                </svg>
+                            </div>
+                            <span id="badge-wants" class="bucket-pct bg-purple-soft mono">30%</span>
+                        </div>
+                        <h4 class="bucket-name">Wants</h4>
+                        <p class="bucket-desc">Guilt-free leisure & treats</p>
+                        <div id="bal-wants" class="bucket-bal mono">₱0.00</div>
+                    </div>
+                    <div>
+                        <div class="progress-track"><div id="bar-wants" class="progress-fill fill-purple" style="width:100%"></div></div>
+                        <div class="bucket-meta mono">
+                            <span>In: <strong id="in-wants">₱0</strong></span>
+                            <span>Out: <strong id="spent-wants" class="c-rose">₱0</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Savings / Time Deposit (20%) -->
+                <div class="bucket-card">
+                    <div>
+                        <div class="bucket-top">
+                            <div class="bucket-icon bg-emerald-soft">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2V5z"></path>
+                                    <path d="M2 9v1c0 1.1.9 2 2 2h1"></path>
+                                </svg>
+                            </div>
+                            <span id="badge-savings" class="bucket-pct bg-emerald-soft mono">20%</span>
+                        </div>
+                        <h4 class="bucket-name">Savings / Time Dep</h4>
+                        <p class="bucket-desc">Emergency & Maya TD</p>
+                        <div id="bal-savings" class="bucket-bal mono c-emerald">₱0.00</div>
+                    </div>
+                    <div>
+                        <div class="progress-track"><div id="bar-savings" class="progress-fill fill-emerald" style="width:100%"></div></div>
+                        <div class="bucket-meta mono">
+                            <span>In: <strong id="in-savings">₱0</strong></span>
+                            <span>Out: <strong id="spent-savings" class="c-rose">₱0</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Capital (10%) -->
+                <div class="bucket-card">
+                    <div>
+                        <div class="bucket-top">
+                            <div class="bucket-icon bg-amber-soft">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                </svg>
+                            </div>
+                            <span id="badge-business" class="bucket-pct bg-amber-soft mono">10%</span>
+                        </div>
+                        <h4 class="bucket-name">Business Capital</h4>
+                        <p class="bucket-desc">TikTok Shop & ventures</p>
+                        <div id="bal-business" class="bucket-bal mono">₱0.00</div>
+                    </div>
+                    <div>
+                        <div class="progress-track"><div id="bar-business" class="progress-fill fill-amber" style="width:100%"></div></div>
+                        <div class="bucket-meta mono">
+                            <span>In: <strong id="in-business">₱0</strong></span>
+                            <span>Out: <strong id="spent-business" class="c-rose">₱0</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offline Pure SVG Analytics Card -->
+            <div class="card" style="margin-top:16px;">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">Allocation vs. Remaining</h3>
+                        <p class="card-subtitle">Zero-dependency offline SVG breakdown</p>
+                    </div>
+                    <div style="display:flex;gap:4px;background:var(--bg-input);padding:3px;border-radius:10px;">
+                        <button type="button" id="chartBarToggle" class="btn-sm" style="border:none;background:var(--bg-card);color:var(--text-primary);font-weight:700;cursor:pointer;">Bars</button>
+                        <button type="button" id="chartRingToggle" class="btn-sm" style="border:none;background:transparent;color:var(--text-secondary);font-weight:700;cursor:pointer;">Ring</button>
+                    </div>
+                </div>
+                <div id="svgChartContainer" class="svg-chart-wrap"></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: ADD (Funnel Income & Log Expense)   -->
+        <!-- ========================================== -->
+        <section id="view-add" class="tab-view">
+            <div class="segmented" role="tablist">
+                <button type="button" id="segIncomeBtn" class="seg-btn active" role="tab" aria-selected="true">+ Funnel Income</button>
+                <button type="button" id="segExpenseBtn" class="seg-btn" role="tab" aria-selected="false">- Log Expense</button>
+            </div>
+
+            <!-- Income Auto-Allocator Form -->
+            <div id="panelIncome" class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <div class="bucket-icon bg-emerald-soft">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Add Incoming Funds</h3>
+                            <p class="card-subtitle">Auto-splits into your 4 FBM buckets</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="incomeForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="incomeAmount" class="label">Amount (₱)</label>
+                            <div class="input-wrap">
+                                <span class="input-prefix mono">₱</span>
+                                <input type="number" id="incomeAmount" class="input has-prefix mono" inputmode="decimal" step="0.01" min="1" placeholder="5000.00" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="incomeDate" class="label">Date Received</label>
+                            <input type="date" id="incomeDate" class="input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="incomeSource" class="label">Source / Note</label>
+                        <input type="text" id="incomeSource" class="input" placeholder="e.g., Allowance, TikTok Payout, Freelance" required>
+                    </div>
+
+                    <div class="split-preview-box">
+                        <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--text-muted);">
+                            <span>LIVE FUNNEL SPLIT PREVIEW</span>
+                            <span id="previewSplitLabel" class="mono c-blue">40 / 30 / 20 / 10</span>
+                        </div>
+                        <div class="split-grid">
+                            <div class="split-chip">
+                                <span class="split-chip-label c-blue">Allowance</span>
+                                <span id="prev-allowance" class="split-chip-val mono">₱0.00</span>
+                            </div>
+                            <div class="split-chip">
+                                <span class="split-chip-label c-purple">Wants</span>
+                                <span id="prev-wants" class="split-chip-val mono">₱0.00</span>
+                            </div>
+                            <div class="split-chip">
+                                <span class="split-chip-label c-emerald">Savings</span>
+                                <span id="prev-savings" class="split-chip-val mono">₱0.00</span>
+                            </div>
+                            <div class="split-chip">
+                                <span class="split-chip-label c-amber">Business</span>
+                                <span id="prev-business" class="split-chip-val mono">₱0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-emerald">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line>
+                            <polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line>
+                        </svg>
+                        Funnel & Allocate Funds
+                    </button>
+                </form>
+            </div>
+
+            <!-- Expense Logger Form -->
+            <div id="panelExpense" class="card hidden">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <div class="bucket-icon bg-rose-soft">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Log Bucket Expense</h3>
+                            <p class="card-subtitle">Deduct spending from a designated bucket</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="expenseForm">
+                    <div class="form-group">
+                        <label for="expenseBucket" class="label">Deduct From Bucket</label>
+                        <select id="expenseBucket" class="select" required>
+                            <option value="allowance">Allowance / Pocket Money (Daily Needs)</option>
+                            <option value="wants">Wants (Discretionary)</option>
+                            <option value="savings">Savings / Time Deposit (Emergency)</option>
+                            <option value="business">Business Capital (Inventory / Ads)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expenseAmount" class="label">Amount (₱)</label>
+                            <div class="input-wrap">
+                                <span class="input-prefix mono">₱</span>
+                                <input type="number" id="expenseAmount" class="input has-prefix mono" inputmode="decimal" step="0.01" min="0.01" placeholder="120.00" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="expenseDate" class="label">Expense Date</label>
+                            <input type="date" id="expenseDate" class="input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expenseDescription" class="label">Description</label>
+                        <input type="text" id="expenseDescription" class="input" placeholder="e.g., Lunch, Jeepney fare, Packaging pouches" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-rose">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        Record Expense
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: MSR (Maya Savings Rate Estimator)   -->
+        <!-- ========================================== -->
+        <section id="view-msr" class="tab-view">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <div class="bucket-icon bg-emerald-soft">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                <polyline points="17 6 23 6 23 12"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="card-title">MSR Interest Estimator</h3>
+                            <p class="card-subtitle">Maya Savings / Time Deposit Net Yield</p>
+                        </div>
+                    </div>
+                    <button type="button" id="syncSavingsBtn" class="btn btn-secondary btn-sm">Sync Savings</button>
+                </div>
+
+                <div class="form-group">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <label for="msrPrincipal" class="label">Principal Amount (₱)</label>
+                        <span id="msrAutoSyncBadge" style="font-size:11px;font-weight:700;" class="c-emerald">Synced with Savings</span>
+                    </div>
+                    <div class="input-wrap">
+                        <span class="input-prefix mono">₱</span>
+                        <input type="number" id="msrPrincipal" class="input has-prefix mono" inputmode="decimal" step="0.01" min="0" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="msrRate" class="label">Annual Interest Rate (% p.a.)</label>
+                    <input type="number" id="msrRate" class="input mono" inputmode="decimal" step="0.1" min="0" max="100" value="6.0">
+                    <div class="preset-row">
+                        <button type="button" class="preset-pill mono msr-preset" data-rate="3.5">3.5% Base</button>
+                        <button type="button" class="preset-pill mono msr-preset active" data-rate="6">6.0% Boost</button>
+                        <button type="button" class="preset-pill mono msr-preset" data-rate="8">8.0% Mission</button>
+                        <button type="button" class="preset-pill mono msr-preset" data-rate="10">10.0% Max</button>
+                    </div>
+                </div>
+
+                <div class="msr-results">
+                    <div class="msr-box highlight">
+                        <span class="msr-box-label">Daily Net</span>
+                        <span id="msrDailyNet" class="msr-box-val mono c-emerald">₱0.00</span>
+                    </div>
+                    <div class="msr-box">
+                        <span class="msr-box-label">30-Day Net</span>
+                        <span id="msrMonthlyNet" class="msr-box-val mono">₱0.00</span>
+                    </div>
+                    <div class="msr-box">
+                        <span class="msr-box-label">365-Day Net</span>
+                        <span id="msrYearlyNet" class="msr-box-val mono">₱0.00</span>
+                    </div>
+                </div>
+
+                <p class="mono" style="font-size:11px;color:var(--text-muted);text-align:center;margin:14px 0 0;">
+                    Daily Net = Amount × (Rate% / 365) × 0.80 (net of 20% tax)
+                </p>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: LEDGER & OFFLINE BACKUP             -->
+        <!-- ========================================== -->
+        <section id="view-ledger" class="tab-view">
+            <!-- Offline Data Backup & Export Card -->
+            <div class="card">
+                <div class="card-header" style="margin-bottom:10px;">
+                    <div>
+                        <h3 class="card-title">Offline Backup & Export</h3>
+                        <p class="card-subtitle">Save or restore your ledger locally on iPhone</p>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+                    <button type="button" id="exportCsvBtn" class="btn btn-secondary btn-sm" style="width:100%;">Export CSV</button>
+                    <button type="button" id="exportJsonBtn" class="btn btn-secondary btn-sm" style="width:100%;">Backup JSON</button>
+                    <button type="button" id="importJsonBtn" class="btn btn-secondary btn-sm" style="width:100%;">Restore JSON</button>
+                    <input type="file" id="importJsonInput" accept=".json,application/json" class="hidden">
+                </div>
+                <div style="margin-top:10px;text-align:right;">
+                    <button type="button" id="resetDataBtn" class="text-link-btn c-rose" style="font-size:11.5px;">Reset All Data</button>
+                </div>
+            </div>
+
+            <!-- Transaction History Header & Filters -->
+            <div class="section-head">
+                <h3 class="section-title">Transaction History</h3>
+            </div>
+
+            <div class="form-row" style="margin-bottom:12px;">
+                <select id="filterType" class="select" style="min-height:40px;font-size:13px;">
+                    <option value="all">All Types</option>
+                    <option value="income">Income Funneled (+)</option>
+                    <option value="expense">Expenses (-)</option>
+                </select>
+                <select id="filterBucket" class="select" style="min-height:40px;font-size:13px;">
+                    <option value="all">All Buckets</option>
+                    <option value="allowance">Allowance (40%)</option>
+                    <option value="wants">Wants (30%)</option>
+                    <option value="savings">Savings (20%)</option>
+                    <option value="business">Business Capital (10%)</option>
+                </select>
+            </div>
+
+            <div id="transactionList" class="tx-list"></div>
+            <div id="emptyTransactionsState" class="card empty-box hidden">
+                No transactions match your filter. Tap <strong>Add</strong> below to funnel income or log an expense.
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Fixed iOS Bottom Navigation Bar -->
+    <nav class="ios-tabbar" aria-label="Main Navigation">
+        <div class="ios-tabbar-inner">
+            <button type="button" class="tab-btn active" data-tab="dashboard">
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                </svg>
+                <span>Dashboard</span>
+            </button>
+            <button type="button" class="tab-btn" data-tab="add">
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                <span>Add</span>
+            </button>
+            <button type="button" class="tab-btn" data-tab="msr">
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                    <polyline points="16 7 22 7 22 13"></polyline>
+                </svg>
+                <span>MSR</span>
+            </button>
+            <button type="button" class="tab-btn" data-tab="ledger">
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+                <span>Ledger</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Custom Confirmation Sheet Modal (Replaces confirm()) -->
+    <div id="confirmModal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal-sheet">
+            <h3 id="confirmTitle" class="card-title" style="margin-bottom:6px;">Confirm Action</h3>
+            <p id="confirmMessage" class="card-subtitle" style="font-size:13px;line-height:1.45;margin-bottom:18px;">Are you sure?</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <button type="button" id="confirmCancelBtn" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="confirmProceedBtn" class="btn btn-rose">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Transaction Modal -->
+    <div id="editModal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal-sheet">
+            <div class="card-header">
+                <h3 class="card-title">Edit Transaction</h3>
+                <button type="button" id="closeEditModalBtn" class="tx-act-btn" aria-label="Close">✕</button>
+            </div>
+            <form id="editTransactionForm">
+                <input type="hidden" id="editTxId">
+                <div id="editBucketGroup" class="form-group">
+                    <label for="editTxBucket" class="label">Target Bucket</label>
+                    <select id="editTxBucket" class="select">
+                        <option value="allowance">Allowance / Pocket Money (40%)</option>
+                        <option value="wants">Wants (30%)</option>
+                        <option value="savings">Savings / Time Deposit (20%)</option>
+                        <option value="business">Business Capital (10%)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editTxAmount" class="label">Amount (₱)</label>
+                    <input type="number" id="editTxAmount" class="input mono" inputmode="decimal" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTxDescription" class="label">Description</label>
+                    <input type="text" id="editTxDescription" class="input" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTxDate" class="label">Date</label>
+                    <input type="date" id="editTxDate" class="input" required>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;">
+                    <button type="button" id="cancelEditBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-indigo">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Customize Split Ratios Modal -->
+    <div id="ratiosModal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal-sheet">
+            <div class="card-header">
+                <div>
+                    <h3 class="card-title">Customize FBM Split Ratios</h3>
+                    <p class="card-subtitle">Total must equal exactly 100%</p>
+                </div>
+                <button type="button" id="closeRatiosModalBtn" class="tx-act-btn" aria-label="Close">✕</button>
+            </div>
+            <form id="ratiosForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ratioAllowance" class="label c-blue">Allowance (%)</label>
+                        <input type="number" id="ratioAllowance" class="input mono" inputmode="numeric" min="0" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ratioWants" class="label c-purple">Wants (%)</label>
+                        <input type="number" id="ratioWants" class="input mono" inputmode="numeric" min="0" max="100" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ratioSavings" class="label c-emerald">Savings (%)</label>
+                        <input type="number" id="ratioSavings" class="input mono" inputmode="numeric" min="0" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ratioBusiness" class="label c-amber">Business (%)</label>
+                        <input type="number" id="ratioBusiness" class="input mono" inputmode="numeric" min="0" max="100" required>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--border-color);margin-bottom:10px;">
+                    <span class="label" style="margin:0;">Total Allocation</span>
+                    <span id="ratioTotalIndicator" class="mono c-emerald" style="font-weight:800;font-size:15px;">100%</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <button type="button" id="resetDefaultRatiosBtn" class="btn btn-secondary">40/30/20/10</button>
+                    <button type="submit" id="saveRatiosBtn" class="btn btn-indigo">Apply Ratios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 100% Offline Application & PWA Service Worker Script -->
+    <script>
+        (function () {
+            'use strict';
+
+            // ==========================================
+            // 1. DYNAMIC PWA MANIFEST & SERVICE WORKER
+            // ==========================================
+            function initOfflinePWA() {
+                try {
+                    const iconSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%234f46e5'/%3E%3Cpath d='M108 136h296L290 272v102l-68 34V272L108 136z' fill='none' stroke='%23ffffff' stroke-width='34' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
+                    const manifestObj = {
+                        name: "Kimuel's Funnel Budgeting Method",
+                        short_name: "Kimuel FBM",
+                        description: "Offline-first 40/30/20/10 Funnel Budgeting & Maya Savings Rate tracker",
+                        start_url: "./",
+                        display: "standalone",
+                        background_color: "#020617",
+                        theme_color: "#0f172a",
+                        orientation: "portrait",
+                        icons: [
+                            { src: iconSvg, sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" },
+                            { src: iconSvg, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+                        ]
+                    };
+
+                    const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+                    const manifestURL = URL.createObjectURL(manifestBlob);
+                    const linkEl = document.getElementById('pwaManifestLink');
+                    if (linkEl) linkEl.href = manifestURL;
+                } catch (e) {
+                    // Gracefully continue if Blob manifest is restricted in sandboxed iframes
+                }
+
+                // Register inline Blob Service Worker for offline caching when served over HTTPS/localhost
+                if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+                    try {
+                        const swCode = `
+                            const CACHE_NAME = 'kimuel-fbm-offline-v1';
+                            self.addEventListener('install', (event) => {
+                                self.skipWaiting();
+                                event.waitUntil(
+                                    caches.open(CACHE_NAME).then((cache) => cache.addAll(['./']).catch(() => {}))
+                                );
+                            });
+                            self.addEventListener('activate', (event) => {
+                                event.waitUntil(self.clients.claim());
+                            });
+                            self.addEventListener('fetch', (event) => {
+                                if (event.request.method !== 'GET') return;
+                                event.respondWith(
+                                    caches.match(event.request).then((cached) => {
+                                        const networkFetch = fetch(event.request).then((res) => {
+                                            if (res && res.status === 200) {
+                                                const copy = res.clone();
+                                                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+                                            }
+                                            return res;
+                                        }).catch(() => cached);
+                                        return cached || networkFetch;
+                                    })
+                                );
+                            });
+                        `;
+                        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+                        const swUrl = URL.createObjectURL(swBlob);
+                        navigator.serviceWorker.register(swUrl).catch(() => {});
+                    } catch (err) {
+                        // Fallback silently to localStorage persistence
+                    }
+                }
+            }
+
+            // Show dismissible iOS Safari 'Add to Home Screen' banner when not yet installed
+            function initIOSInstallBanner() {
+                const DISMISS_KEY = 'kimuel_fbm_a2hs_dismissed_v1';
+                if (localStorage.getItem(DISMISS_KEY) === '1') return;
+
+                const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+                if (isStandalone) return;
+
+                const ua = window.navigator.userAgent || '';
+                const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                const isMobileViewport = window.innerWidth <= 820;
+
+                if (isIOS || isMobileViewport) {
+                    const banner = document.getElementById('a2hsBanner');
+                    banner.classList.add('visible');
+                    document.getElementById('dismissA2hsBtn').addEventListener('click', () => {
+                        banner.classList.remove('visible');
+                        localStorage.setItem(DISMISS_KEY, '1');
+                    });
+                }
+            }
+
+            // ==========================================
+            // 2. STATE & CONSTANTS
+            // ==========================================
+            const STORAGE_KEY = 'kimuel_fbm_tracker_v1';
+
+            const DEFAULT_RATIOS = {
+                allowance: 40,
+                wants: 30,
+                savings: 20,
+                business: 10
+            };
+
+            const BUCKET_META = {
+                allowance: { shortName: 'Allowance', color: '#3b82f6', badgeClass: 'bg-blue-soft' },
+                wants: { shortName: 'Wants', color: '#a855f7', badgeClass: 'bg-purple-soft' },
+                savings: { shortName: 'Savings', color: '#10b981', badgeClass: 'bg-emerald-soft' },
+                business: { shortName: 'Business', color: '#f59e0b', badgeClass: 'bg-amber-soft' }
+            };
+
+            let appState = {
+                ratios: { ...DEFAULT_RATIOS },
+                transactions: [],
+                msrRate: 6.0,
+                msrCustomPrincipal: null,
+                chartType: 'bar',
+                theme: 'light',
+                activeTab: 'dashboard'
+            };
+
+            // ==========================================
+            // 3. UTILITIES
+            // ==========================================
+            function formatPHP(amount) {
+                const num = Number(amount) || 0;
+                return '₱' + num.toLocaleString('en-PH', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+
+            function formatCompactPHP(amount) {
+                const num = Number(amount) || 0;
+                return '₱' + num.toLocaleString('en-PH', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                });
+            }
+
+            function getTodayISO() {
+                const now = new Date();
+                const offset = now.getTimezoneOffset() * 60000;
+                return new Date(now - offset).toISOString().split('T')[0];
+            }
+
+            function generateId() {
+                return 'tx_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6);
+            }
+
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                container.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transition = 'opacity 0.25s ease';
+                    setTimeout(() => toast.remove(), 260);
+                }, 2800);
+            }
+
+            function showConfirmDialog({ title, message, confirmText = 'Confirm', isDanger = true }) {
+                return new Promise((resolve) => {
+                    const modal = document.getElementById('confirmModal');
+                    const proceedBtn = document.getElementById('confirmProceedBtn');
+                    const cancelBtn = document.getElementById('confirmCancelBtn');
+
+                    document.getElementById('confirmTitle').textContent = title;
+                    document.getElementById('confirmMessage').textContent = message;
+                    proceedBtn.textContent = confirmText;
+                    proceedBtn.className = isDanger ? 'btn btn-rose' : 'btn btn-indigo';
+
+                    modal.classList.add('open');
+
+                    const cleanup = (result) => {
+                        modal.classList.remove('open');
+                        proceedBtn.removeEventListener('click', onProceed);
+                        cancelBtn.removeEventListener('click', onCancel);
+                        resolve(result);
+                    };
+
+                    const onProceed = () => cleanup(true);
+                    const onCancel = () => cleanup(false);
+
+                    proceedBtn.addEventListener('click', onProceed);
+                    cancelBtn.addEventListener('click', onCancel);
+                });
+            }
+
+            // ==========================================
+            // 4. PERSISTENCE
+            // ==========================================
+            function saveState() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+                } catch (e) {
+                    showToast('Storage limit reached on device.', 'error');
+                }
+            }
+
+            function loadState() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const parsed = JSON.parse(raw);
+                        appState = {
+                            ...appState,
+                            ...parsed,
+                            ratios: { ...DEFAULT_RATIOS, ...(parsed.ratios || {}) },
+                            transactions: Array.isArray(parsed.transactions) ? parsed.transactions : []
+                        };
+                    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        appState.theme = 'dark';
+                    }
+                } catch (e) {
+                    // Use defaults
+                }
+            }
+
+            // ==========================================
+            // 5. CORE FBM & MSR CALCULATIONS
+            // ==========================================
+            function computeSplits(amount, ratios) {
+                const total = Number(amount) || 0;
+                const allowance = Math.round((total * (ratios.allowance / 100)) * 100) / 100;
+                const wants = Math.round((total * (ratios.wants / 100)) * 100) / 100;
+                const savings = Math.round((total * (ratios.savings / 100)) * 100) / 100;
+                const business = Math.round((total - (allowance + wants + savings)) * 100) / 100;
+                return { allowance, wants, savings, business };
+            }
+
+            function calculateBalances() {
+                const stats = {
+                    allowance: { allocated: 0, spent: 0, balance: 0 },
+                    wants: { allocated: 0, spent: 0, balance: 0 },
+                    savings: { allocated: 0, spent: 0, balance: 0 },
+                    business: { allocated: 0, spent: 0, balance: 0 },
+                    totalIncome: 0,
+                    totalSpent: 0,
+                    netBalance: 0
+                };
+
+                appState.transactions.forEach((tx) => {
+                    const amt = Number(tx.amount) || 0;
+                    if (tx.type === 'income') {
+                        stats.totalIncome += amt;
+                        const s = tx.splits || computeSplits(amt, appState.ratios);
+                        stats.allowance.allocated += Number(s.allowance) || 0;
+                        stats.wants.allocated += Number(s.wants) || 0;
+                        stats.savings.allocated += Number(s.savings) || 0;
+                        stats.business.allocated += Number(s.business) || 0;
+                    } else if (tx.type === 'expense' && stats[tx.bucket]) {
+                        stats.totalSpent += amt;
+                        stats[tx.bucket].spent += amt;
+                    }
+                });
+
+                ['allowance', 'wants', 'savings', 'business'].forEach((key) => {
+                    stats[key].balance = stats[key].allocated - stats[key].spent;
+                    stats.netBalance += stats[key].balance;
+                });
+
+                return stats;
+            }
+
+            // ==========================================
+            // 6. PURE INLINE SVG CHARTS (ZERO CDN)
+            // ==========================================
+            function renderSVGChart(stats) {
+                const container = document.getElementById('svgChartContainer');
+                const barBtn = document.getElementById('chartBarToggle');
+                const ringBtn = document.getElementById('chartRingToggle');
+
+                if (appState.chartType === 'bar') {
+                    barBtn.style.background = 'var(--bg-card)';
+                    barBtn.style.color = 'var(--text-primary)';
+                    ringBtn.style.background = 'transparent';
+                    ringBtn.style.color = 'var(--text-secondary)';
+                } else {
+                    ringBtn.style.background = 'var(--bg-card)';
+                    ringBtn.style.color = 'var(--text-primary)';
+                    barBtn.style.background = 'transparent';
+                    barBtn.style.color = 'var(--text-secondary)';
+                }
+
+                const buckets = [
+                    { key: 'allowance', label: `Allowance (${appState.ratios.allowance}%)`, color: '#3b82f6' },
+                    { key: 'wants', label: `Wants (${appState.ratios.wants}%)`, color: '#a855f7' },
+                    { key: 'savings', label: `Savings (${appState.ratios.savings}%)`, color: '#10b981' },
+                    { key: 'business', label: `Business (${appState.ratios.business}%)`, color: '#f59e0b' }
+                ];
+
+                if (appState.chartType === 'bar') {
+                    const maxVal = Math.max(1, ...buckets.map((b) => Math.max(stats[b.key].allocated, stats[b.key].balance)));
+                    let rowsHtml = buckets.map((b, idx) => {
+                        const alloc = stats[b.key].allocated;
+                        const rem = Math.max(0, stats[b.key].balance);
+                        const allocPct = Math.min(100, (alloc / maxVal) * 100);
+                        const remPct = Math.min(100, (rem / maxVal) * 100);
+                        const y = idx * 54 + 6;
+
+                        return `
+                            <g transform="translate(0, ${y})">
+                                <text x="0" y="13" fill="var(--text-primary)" font-size="12" font-weight="700" font-family="var(--font-sans)">${b.label}</text>
+                                <text x="400" y="13" text-anchor="end" fill="var(--text-secondary)" font-size="11.5" font-weight="700" font-family="var(--font-mono)">${formatCompactPHP(rem)} / ${formatCompactPHP(alloc)}</text>
+                                <rect x="0" y="21" width="400" height="14" rx="7" fill="var(--bg-input)"></rect>
+                                <rect x="0" y="21" width="${(allocPct * 4).toFixed(1)}" height="14" rx="7" fill="${b.color}" opacity="0.26"></rect>
+                                <rect x="0" y="21" width="${(remPct * 4).toFixed(1)}" height="14" rx="7" fill="${b.color}"></rect>
+                            </g>
+                        `;
+                    }).join('');
+
+                    container.innerHTML = `
+                        <svg viewBox="0 0 400 222" width="100%" style="display:block;overflow:visible;" role="img" aria-label="Bucket allocation comparison bars">
+                            ${rowsHtml}
+                        </svg>
+                    `;
+                } else {
+                    const values = buckets.map((b) => Math.max(0, stats[b.key].balance));
+                    const total = values.reduce((acc, v) => acc + v, 0);
+                    const effectiveValues = total > 0 ? values : buckets.map((b) => appState.ratios[b.key]);
+                    const effectiveTotal = effectiveValues.reduce((acc, v) => acc + v, 0) || 100;
+
+                    const radius = 64;
+                    const circumference = 2 * Math.PI * radius;
+                    let offset = 0;
+
+                    const arcs = buckets.map((b, i) => {
+                        const val = effectiveValues[i];
+                        const pct = val / effectiveTotal;
+                        const dash = pct * circumference;
+                        const seg = `
+                            <circle cx="95" cy="95" r="${radius}" fill="transparent"
+                                stroke="${b.color}" stroke-width="22"
+                                stroke-dasharray="${dash.toFixed(2)} ${circumference.toFixed(2)}"
+                                stroke-dashoffset="${(-offset).toFixed(2)}"
+                                transform="rotate(-90 95 95)" />
+                        `;
+                        offset += dash;
+                        return seg;
+                    }).join('');
+
+                    const legendItems = buckets.map((b, i) => {
+                        const val = values[i];
+                        const share = total > 0 ? ((val / total) * 100).toFixed(0) : appState.ratios[b.key];
+                        return `
+                            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-color);">
+                                <span style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;">
+                                    <span style="width:10px;height:10px;border-radius:50%;background:${b.color};display:inline-block;"></span>
+                                    ${BUCKET_META[b.key].shortName}
+                                </span>
+                                <span class="mono" style="font-size:12px;font-weight:700;color:var(--text-secondary);">
+                                    ${total > 0 ? formatCompactPHP(val) : ''} (${share}%)
+                                </span>
+                            </div>
+                        `;
+                    }).join('');
+
+                    container.innerHTML = `
+                        <div style="display:grid;grid-template-columns:180px 1fr;align-items:center;gap:14px;">
+                            <svg viewBox="0 0 190 190" width="180" height="180" style="margin:0 auto;display:block;">
+                                <circle cx="95" cy="95" r="${radius}" fill="transparent" stroke="var(--bg-input)" stroke-width="22" />
+                                ${arcs}
+                                <text x="95" y="90" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-weight="700" font-family="var(--font-sans)">
+                                    ${total > 0 ? 'REMAINING' : 'TARGET SPLIT'}
+                                </text>
+                                <text x="95" y="108" text-anchor="middle" fill="var(--text-primary)" font-size="13" font-weight="800" font-family="var(--font-mono)">
+                                    ${total > 0 ? formatCompactPHP(total) : '100%'}
+                                </text>
+                            </svg>
+                            <div>${legendItems}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            // ==========================================
+            // 7. UI RENDERING
+            // ==========================================
+            function applyTheme() {
+                const html = document.documentElement;
+                const moon = document.getElementById('iconMoon');
+                const sun = document.getElementById('iconSun');
+                if (appState.theme === 'dark') {
+                    html.classList.add('dark');
+                    moon.classList.add('hidden');
+                    sun.classList.remove('hidden');
+                } else {
+                    html.classList.remove('dark');
+                    moon.classList.remove('hidden');
+                    sun.classList.add('hidden');
+                }
+            }
+
+            function switchTab(tabName) {
+                appState.activeTab = tabName;
+                document.querySelectorAll('.tab-view').forEach((el) => el.classList.remove('active'));
+                const target = document.getElementById(`view-${tabName}`);
+                if (target) target.classList.add('active');
+
+                document.querySelectorAll('.tab-btn').forEach((btn) => {
+                    btn.classList.toggle('active', btn.dataset.tab === tabName);
+                });
+            }
+
+            function renderAll() {
+                applyTheme();
+                const stats = calculateBalances();
+                const r = appState.ratios;
+
+                document.getElementById('headerRatioBadge').textContent = `${r.allowance}/${r.wants}/${r.savings}/${r.business}`;
+                document.getElementById('bannerRatioText').textContent = `${r.allowance}% / ${r.wants}% / ${r.savings}% / ${r.business}%`;
+                document.getElementById('previewSplitLabel').textContent = `${r.allowance} / ${r.wants} / ${r.savings} / ${r.business}`;
+
+                document.getElementById('totalNetBalance').textContent = formatPHP(stats.netBalance);
+                document.getElementById('summaryTotalIncome').textContent = formatCompactPHP(stats.totalIncome);
+                document.getElementById('summaryTotalSpent').textContent = formatCompactPHP(stats.totalSpent);
+
+                const retention = stats.totalIncome > 0 ? Math.max(0, (stats.savings.balance / stats.totalIncome) * 100) : 0;
+                document.getElementById('summarySavingsRate').textContent = retention.toFixed(1) + '%';
+
+                ['allowance', 'wants', 'savings', 'business'].forEach((key) => {
+                    const b = stats[key];
+                    document.getElementById(`badge-${key}`).textContent = `${r[key]}%`;
+                    const balEl = document.getElementById(`bal-${key}`);
+                    balEl.textContent = formatPHP(b.balance);
+                    balEl.classList.toggle('c-rose', b.balance < 0);
+
+                    document.getElementById(`in-${key}`).textContent = formatCompactPHP(b.allocated);
+                    document.getElementById(`spent-${key}`).textContent = formatCompactPHP(b.spent);
+
+                    const pctRemaining = b.allocated > 0
+                        ? Math.max(0, Math.min(100, (b.balance / b.allocated) * 100))
+                        : (b.balance > 0 ? 100 : 0);
+                    document.getElementById(`bar-${key}`).style.width = `${pctRemaining}%`;
+                });
+
+                updateIncomeSplitPreview();
+                updateMSREstimator(stats.savings.balance);
+                renderTransactionsList();
+                renderSVGChart(stats);
+            }
+
+            function updateIncomeSplitPreview() {
+                const rawVal = parseFloat(document.getElementById('incomeAmount').value) || 0;
+                const splits = computeSplits(rawVal, appState.ratios);
+                document.getElementById('prev-allowance').textContent = formatPHP(splits.allowance);
+                document.getElementById('prev-wants').textContent = formatPHP(splits.wants);
+                document.getElementById('prev-savings').textContent = formatPHP(splits.savings);
+                document.getElementById('prev-business').textContent = formatPHP(splits.business);
+            }
+
+            function updateMSREstimator(currentSavingsBalance) {
+                const principalInput = document.getElementById('msrPrincipal');
+                const rateInput = document.getElementById('msrRate');
+                const syncBadge = document.getElementById('msrAutoSyncBadge');
+
+                let principal = 0;
+                if (appState.msrCustomPrincipal === null) {
+                    principal = Math.max(0, currentSavingsBalance);
+                    principalInput.value = principal.toFixed(2);
+                    syncBadge.textContent = 'Synced with Savings';
+                    syncBadge.className = 'c-emerald';
+                } else {
+                    principal = Math.max(0, Number(appState.msrCustomPrincipal) || 0);
+                    if (document.activeElement !== principalInput) {
+                        principalInput.value = principal;
+                    }
+                    syncBadge.textContent = 'Custom Amount';
+                    syncBadge.className = 'c-amber';
+                }
+
+                const rate = Math.max(0, Number(appState.msrRate) || 0);
+                if (document.activeElement !== rateInput) {
+                    rateInput.value = rate;
+                }
+
+                document.querySelectorAll('.msr-preset').forEach((btn) => {
+                    const btnRate = parseFloat(btn.dataset.rate);
+                    btn.classList.toggle('active', Math.abs(btnRate - rate) < 0.01);
+                });
+
+                // MSR Formula: Amount * (Rate% / 365) * 0.80
+                const dailyNet = principal * ((rate / 100) / 365) * 0.80;
+                document.getElementById('msrDailyNet').textContent = formatPHP(dailyNet);
+                document.getElementById('msrMonthlyNet').textContent = formatPHP(dailyNet * 30);
+                document.getElementById('msrYearlyNet').textContent = formatPHP(dailyNet * 365);
+            }
+
+            function renderTransactionsList() {
+                const listEl = document.getElementById('transactionList');
+                const emptyState = document.getElementById('emptyTransactionsState');
+                const typeFilter = document.getElementById('filterType').value;
+                const bucketFilter = document.getElementById('filterBucket').value;
+
+                const sorted = [...appState.transactions].sort((a, b) => {
+                    if (b.date !== a.date) return b.date.localeCompare(a.date);
+                    return b.id.localeCompare(a.id);
+                });
+
+                const filtered = sorted.filter((tx) => {
+                    if (typeFilter !== 'all' && tx.type !== typeFilter) return false;
+                    if (bucketFilter !== 'all') {
+                        if (tx.type === 'expense' && tx.bucket !== bucketFilter) return false;
+                        if (tx.type === 'income') {
+                            const s = tx.splits || computeSplits(tx.amount, appState.ratios);
+                            if ((Number(s[bucketFilter]) || 0) <= 0) return false;
+                        }
+                    }
+                    return true;
+                });
+
+                if (filtered.length === 0) {
+                    listEl.innerHTML = '';
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+
+                emptyState.classList.add('hidden');
+                listEl.innerHTML = filtered.map((tx) => {
+                    const isIncome = tx.type === 'income';
+                    const dateStr = new Date(tx.date + 'T00:00:00').toLocaleDateString('en-PH', {
+                        month: 'short', day: 'numeric', year: 'numeric'
+                    });
+
+                    let badgeHtml = '';
+                    if (isIncome) {
+                        const s = tx.splits || computeSplits(tx.amount, appState.ratios);
+                        badgeHtml = `
+                            <span class="tx-badge bg-emerald-soft">FBM Split</span>
+                            <span class="mono">A:${formatCompactPHP(s.allowance)} W:${formatCompactPHP(s.wants)} S:${formatCompactPHP(s.savings)} B:${formatCompactPHP(s.business)}</span>
+                        `;
+                    } else {
+                        const meta = BUCKET_META[tx.bucket] || BUCKET_META.allowance;
+                        badgeHtml = `<span class="tx-badge ${meta.badgeClass}">${escapeHTML(meta.shortName)}</span>`;
+                    }
+
+                    return `
+                        <div class="tx-item">
+                            <div class="tx-left">
+                                <p class="tx-desc">${escapeHTML(tx.description)}</p>
+                                <div class="tx-meta">
+                                    <span class="mono">${dateStr}</span>
+                                    ${badgeHtml}
+                                </div>
+                            </div>
+                            <div class="tx-right">
+                                <span class="tx-amount mono ${isIncome ? 'c-emerald' : 'c-rose'}">
+                                    ${isIncome ? '+' : '-'}${formatPHP(tx.amount)}
+                                </span>
+                                <div class="tx-actions">
+                                    <button type="button" class="tx-act-btn" data-action="edit" data-id="${tx.id}" aria-label="Edit">✎</button>
+                                    <button type="button" class="tx-act-btn c-rose" data-action="delete" data-id="${tx.id}" aria-label="Delete">🗑</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // ==========================================
+            // 8. EVENT HANDLERS
+            // ==========================================
+            function setupEvents() {
+                const today = getTodayISO();
+                document.getElementById('incomeDate').value = today;
+                document.getElementById('expenseDate').value = today;
+
+                // Online/Offline indicator
+                const updateOnlineStatus = () => {
+                    document.getElementById('offlineStatusText').textContent = navigator.onLine ? 'Offline Ready' : 'Offline Mode';
+                };
+                window.addEventListener('online', updateOnlineStatus);
+                window.addEventListener('offline', updateOnlineStatus);
+                updateOnlineStatus();
+
+                // Bottom Tab Navigation
+                document.querySelectorAll('.tab-btn').forEach((btn) => {
+                    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+                });
+
+                // Add Tab Segmented Switcher (Income vs Expense)
+                const segIncomeBtn = document.getElementById('segIncomeBtn');
+                const segExpenseBtn = document.getElementById('segExpenseBtn');
+                const panelIncome = document.getElementById('panelIncome');
+                const panelExpense = document.getElementById('panelExpense');
+
+                segIncomeBtn.addEventListener('click', () => {
+                    segIncomeBtn.classList.add('active');
+                    segExpenseBtn.classList.remove('active');
+                    panelIncome.classList.remove('hidden');
+                    panelExpense.classList.add('hidden');
+                });
+
+                segExpenseBtn.addEventListener('click', () => {
+                    segExpenseBtn.classList.add('active');
+                    segIncomeBtn.classList.remove('active');
+                    panelExpense.classList.remove('hidden');
+                    panelIncome.classList.add('hidden');
+                });
+
+                // Income Live Preview & Submit
+                document.getElementById('incomeAmount').addEventListener('input', updateIncomeSplitPreview);
+
+                document.getElementById('incomeForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const amount = parseFloat(document.getElementById('incomeAmount').value);
+                    const date = document.getElementById('incomeDate').value || getTodayISO();
+                    const description = document.getElementById('incomeSource').value.trim();
+
+                    if (!amount || amount <= 0) {
+                        showToast('Enter a valid amount greater than ₱0.', 'error');
+                        return;
+                    }
+
+                    appState.transactions.push({
+                        id: generateId(),
+                        type: 'income',
+                        amount,
+                        description: description || 'Funneled Income',
+                        date,
+                        splits: computeSplits(amount, appState.ratios)
+                    });
+
+                    appState.msrCustomPrincipal = null;
+                    saveState();
+                    renderAll();
+
+                    document.getElementById('incomeAmount').value = '';
+                    document.getElementById('incomeSource').value = '';
+                    updateIncomeSplitPreview();
+                    showToast(`Funneled ${formatPHP(amount)} into 4 buckets!`);
+                    switchTab('dashboard');
+                });
+
+                // Expense Submit
+                document.getElementById('expenseForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const bucket = document.getElementById('expenseBucket').value;
+                    const amount = parseFloat(document.getElementById('expenseAmount').value);
+                    const date = document.getElementById('expenseDate').value || getTodayISO();
+                    const description = document.getElementById('expenseDescription').value.trim();
+
+                    if (!amount || amount <= 0) {
+                        showToast('Enter a valid expense greater than ₱0.', 'error');
+                        return;
+                    }
+
+                    appState.transactions.push({
+                        id: generateId(),
+                        type: 'expense',
+                        bucket,
+                        amount,
+                        description: description || 'Expense',
+                        date
+                    });
+
+                    saveState();
+                    renderAll();
+
+                    document.getElementById('expenseAmount').value = '';
+                    document.getElementById('expenseDescription').value = '';
+                    showToast(`Logged ${formatPHP(amount)} under ${BUCKET_META[bucket].shortName}.`);
+                    switchTab('dashboard');
+                });
+
+                // Chart Type Toggles
+                document.getElementById('chartBarToggle').addEventListener('click', () => {
+                    appState.chartType = 'bar';
+                    saveState();
+                    renderSVGChart(calculateBalances());
+                });
+                document.getElementById('chartRingToggle').addEventListener('click', () => {
+                    appState.chartType = 'ring';
+                    saveState();
+                    renderSVGChart(calculateBalances());
+                });
+
+                // MSR Controls
+                document.getElementById('msrPrincipal').addEventListener('input', (e) => {
+                    const val = parseFloat(e.target.value);
+                    appState.msrCustomPrincipal = isNaN(val) ? 0 : val;
+                    saveState();
+                    updateMSREstimator(calculateBalances().savings.balance);
+                });
+
+                document.getElementById('msrRate').addEventListener('input', (e) => {
+                    const val = parseFloat(e.target.value);
+                    appState.msrRate = isNaN(val) ? 0 : val;
+                    saveState();
+                    updateMSREstimator(calculateBalances().savings.balance);
+                });
+
+                document.querySelectorAll('.msr-preset').forEach((btn) => {
+                    btn.addEventListener('click', () => {
+                        appState.msrRate = parseFloat(btn.dataset.rate);
+                        saveState();
+                        updateMSREstimator(calculateBalances().savings.balance);
+                    });
+                });
+
+                document.getElementById('syncSavingsBtn').addEventListener('click', () => {
+                    appState.msrCustomPrincipal = null;
+                    saveState();
+                    updateMSREstimator(calculateBalances().savings.balance);
+                    showToast('Synced with Savings bucket.', 'info');
+                });
+
+                // Ledger Filters & Actions
+                document.getElementById('filterType').addEventListener('change', renderTransactionsList);
+                document.getElementById('filterBucket').addEventListener('change', renderTransactionsList);
+
+                document.getElementById('transactionList').addEventListener('click', async (e) => {
+                    const btn = e.target.closest('button[data-action]');
+                    if (!btn) return;
+                    const id = btn.dataset.id;
+                    const tx = appState.transactions.find((t) => t.id === id);
+                    if (!tx) return;
+
+                    if (btn.dataset.action === 'delete') {
+                        const ok = await showConfirmDialog({
+                            title: 'Delete Transaction?',
+                            message: `Remove "${tx.description}" (${formatPHP(tx.amount)})?`,
+                            confirmText: 'Delete',
+                            isDanger: true
+                        });
+                        if (ok) {
+                            appState.transactions = appState.transactions.filter((t) => t.id !== id);
+                            saveState();
+                            renderAll();
+                            showToast('Transaction removed.', 'info');
+                        }
+                    } else if (btn.dataset.action === 'edit') {
+                        document.getElementById('editTxId').value = tx.id;
+                        document.getElementById('editTxAmount').value = tx.amount;
+                        document.getElementById('editTxDescription').value = tx.description;
+                        document.getElementById('editTxDate').value = tx.date;
+                        const bucketGroup = document.getElementById('editBucketGroup');
+                        if (tx.type === 'expense') {
+                            bucketGroup.classList.remove('hidden');
+                            document.getElementById('editTxBucket').value = tx.bucket;
+                        } else {
+                            bucketGroup.classList.add('hidden');
+                        }
+                        document.getElementById('editModal').classList.add('open');
+                    }
+                });
+
+                // Edit Modal Submit & Close
+                const closeEdit = () => document.getElementById('editModal').classList.remove('open');
+                document.getElementById('closeEditModalBtn').addEventListener('click', closeEdit);
+                document.getElementById('cancelEditBtn').addEventListener('click', closeEdit);
+
+                document.getElementById('editTransactionForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const id = document.getElementById('editTxId').value;
+                    const tx = appState.transactions.find((t) => t.id === id);
+                    if (!tx) return;
+
+                    const amt = parseFloat(document.getElementById('editTxAmount').value);
+                    if (!amt || amt <= 0) return;
+
+                    tx.amount = amt;
+                    tx.description = document.getElementById('editTxDescription').value.trim();
+                    tx.date = document.getElementById('editTxDate').value;
+                    if (tx.type === 'expense') {
+                        tx.bucket = document.getElementById('editTxBucket').value;
+                    } else {
+                        tx.splits = computeSplits(amt, appState.ratios);
+                    }
+
+                    saveState();
+                    renderAll();
+                    closeEdit();
+                    showToast('Transaction updated!');
+                });
+
+                // Ratios Modal
+                const ratiosModal = document.getElementById('ratiosModal');
+                const closeRatios = () => ratiosModal.classList.remove('open');
+                const validateRatios = () => {
+                    const total = ['ratioAllowance', 'ratioWants', 'ratioSavings', 'ratioBusiness']
+                        .reduce((sum, id) => sum + (parseInt(document.getElementById(id).value, 10) || 0), 0);
+                    const ind = document.getElementById('ratioTotalIndicator');
+                    const btn = document.getElementById('saveRatiosBtn');
+                    ind.textContent = `${total}%`;
+                    ind.className = total === 100 ? 'mono c-emerald' : 'mono c-rose';
+                    btn.disabled = total !== 100;
+                    btn.style.opacity = total === 100 ? '1' : '0.5';
+                };
+
+                document.getElementById('openRatiosBtn').addEventListener('click', () => {
+                    document.getElementById('ratioAllowance').value = appState.ratios.allowance;
+                    document.getElementById('ratioWants').value = appState.ratios.wants;
+                    document.getElementById('ratioSavings').value = appState.ratios.savings;
+                    document.getElementById('ratioBusiness').value = appState.ratios.business;
+                    validateRatios();
+                    ratiosModal.classList.add('open');
+                });
+                document.getElementById('closeRatiosModalBtn').addEventListener('click', closeRatios);
+                ['ratioAllowance', 'ratioWants', 'ratioSavings', 'ratioBusiness'].forEach((id) => {
+                    document.getElementById(id).addEventListener('input', validateRatios);
+                });
+                document.getElementById('resetDefaultRatiosBtn').addEventListener('click', () => {
+                    document.getElementById('ratioAllowance').value = 40;
+                    document.getElementById('ratioWants').value = 30;
+                    document.getElementById('ratioSavings').value = 20;
+                    document.getElementById('ratioBusiness').value = 10;
+                    validateRatios();
+                });
+                document.getElementById('ratiosForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const a = parseInt(document.getElementById('ratioAllowance').value, 10) || 0;
+                    const w = parseInt(document.getElementById('ratioWants').value, 10) || 0;
+                    const s = parseInt(document.getElementById('ratioSavings').value, 10) || 0;
+                    const b = parseInt(document.getElementById('ratioBusiness').value, 10) || 0;
+                    if (a + w + s + b !== 100) return;
+
+                    appState.ratios = { allowance: a, wants: w, savings: s, business: b };
+                    saveState();
+                    renderAll();
+                    closeRatios();
+                    showToast(`Ratios updated to ${a}/${w}/${s}/${b}!`);
+                });
+
+                // Dark / Light Theme
+                document.getElementById('themeToggleBtn').addEventListener('click', () => {
+                    appState.theme = appState.theme === 'dark' ? 'light' : 'dark';
+                    saveState();
+                    renderAll();
+                });
+
+                // CSV Export
+                document.getElementById('exportCsvBtn').addEventListener('click', () => {
+                    if (appState.transactions.length === 0) {
+                        showToast('No transactions to export.', 'info');
+                        return;
+                    }
+                    const headers = ['Date', 'Type', 'Bucket', 'Description', 'Amount (PHP)', 'Allowance', 'Wants', 'Savings', 'Business'];
+                    const rows = appState.transactions.map((tx) => {
+                        const s = tx.type === 'income'
+                            ? (tx.splits || computeSplits(tx.amount, appState.ratios))
+                            : { allowance: 0, wants: 0, savings: 0, business: 0 };
+                        return [
+                            tx.date,
+                            tx.type.toUpperCase(),
+                            tx.type === 'expense' ? BUCKET_META[tx.bucket]?.shortName : 'FBM Split',
+                            `"${(tx.description || '').replace(/"/g, '""')}"`,
+                            Number(tx.amount).toFixed(2),
+                            Number(s.allowance).toFixed(2),
+                            Number(s.wants).toFixed(2),
+                            Number(s.savings).toFixed(2),
+                            Number(s.business).toFixed(2)
+                        ].join(',');
+                    });
+                    downloadBlob('\uFEFF' + [headers.join(','), ...rows].join('\n'), `Kimuel_FBM_${getTodayISO()}.csv`, 'text/csv;charset=utf-8;');
+                    showToast('CSV exported!');
+                });
+
+                // JSON Backup Export
+                document.getElementById('exportJsonBtn').addEventListener('click', () => {
+                    const backup = {
+                        app: 'Kimuel_FBM_Offline_PWA',
+                        exportedAt: new Date().toISOString(),
+                        data: appState
+                    };
+                    downloadBlob(JSON.stringify(backup, null, 2), `Kimuel_FBM_Backup_${getTodayISO()}.json`, 'application/json');
+                    showToast('JSON backup downloaded!');
+                });
+
+                // JSON Backup Restore
+                const importInput = document.getElementById('importJsonInput');
+                document.getElementById('importJsonBtn').addEventListener('click', () => importInput.click());
+                importInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        try {
+                            const parsed = JSON.parse(ev.target.result);
+                            const restored = parsed.data ? parsed.data : parsed;
+                            if (!restored || !Array.isArray(restored.transactions)) {
+                                throw new Error('Invalid backup format');
+                            }
+                            appState = {
+                                ...appState,
+                                ...restored,
+                                ratios: { ...DEFAULT_RATIOS, ...(restored.ratios || {}) }
+                            };
+                            saveState();
+                            renderAll();
+                            showToast(`Restored ${appState.transactions.length} transactions!`);
+                        } catch (err) {
+                            showToast('Invalid JSON backup file.', 'error');
+                        }
+                        importInput.value = '';
+                    };
+                    reader.readAsText(file);
+                });
+
+                // Reset All Data
+                document.getElementById('resetDataBtn').addEventListener('click', async () => {
+                    const ok = await showConfirmDialog({
+                        title: 'Reset All Data?',
+                        message: 'This erases all logged income, expenses, and resets ratios to 40/30/20/10.',
+                        confirmText: 'Reset Everything',
+                        isDanger: true
+                    });
+                    if (ok) {
+                        appState.ratios = { ...DEFAULT_RATIOS };
+                        appState.transactions = [];
+                        appState.msrCustomPrincipal = null;
+                        appState.msrRate = 6.0;
+                        saveState();
+                        renderAll();
+                        showToast('All data reset.', 'info');
+                    }
+                });
+
+                // Sample Data Loader
+                document.getElementById('quickDemoBtn').addEventListener('click', async () => {
+                    if (appState.transactions.length > 0) {
+                        const ok = await showConfirmDialog({
+                            title: 'Add Sample Transactions?',
+                            message: 'Append sample Philippine Peso income & expenses to test the buckets?',
+                            confirmText: 'Add Samples',
+                            isDanger: false
+                        });
+                        if (!ok) return;
+                    }
+                    const d = getTodayISO();
+                    appState.transactions.push(
+                        { id: generateId(), type: 'income', amount: 10000, description: 'Monthly Allowance', date: d, splits: computeSplits(10000, appState.ratios) },
+                        { id: generateId(), type: 'income', amount: 4500, description: 'TikTok Affiliate Payout', date: d, splits: computeSplits(4500, appState.ratios) },
+                        { id: generateId(), type: 'expense', bucket: 'allowance', amount: 850, description: 'Groceries & meals', date: d },
+                        { id: generateId(), type: 'expense', bucket: 'wants', amount: 380, description: 'Iced coffee & snacks', date: d },
+                        { id: generateId(), type: 'expense', bucket: 'business', amount: 500, description: 'Shipping pouches & labels', date: d }
+                    );
+                    appState.msrCustomPrincipal = null;
+                    saveState();
+                    renderAll();
+                    showToast('Sample data loaded!');
+                });
+            }
+
+            function downloadBlob(content, filename, mimeType) {
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            // ==========================================
+            // 9. BOOTSTRAP
+            // ==========================================
+            window.addEventListener('DOMContentLoaded', () => {
+                initOfflinePWA();
+                loadState();
+                setupEvents();
+                renderAll();
+                initIOSInstallBanner();
+            });
+        })();
+    </script>
+</body>
+</html>
